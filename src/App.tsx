@@ -240,13 +240,13 @@ function App() {
             digitSize={1.2}
             timeScale={1}
             pause={false}
-            scanlineIntensity={1}
+            scanlineIntensity={0.5}
             glitchAmount={1}
             flickerAmount={1}
             noiseAmp={1}
             chromaticAberration={0}
             dither={0}
-            curvature={0}
+            curvature={0.1}
             tint="#ffffff"
             mouseReact={true}
             mouseStrength={0.5}
