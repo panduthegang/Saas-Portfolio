@@ -3,12 +3,11 @@ import Lenis from '@studio-freight/lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import FaultyTerminal from './components/FaultyTerminal';
+import BubbleMenu from './components/BubbleMenu';
 import { 
   Code2, 
   Database, 
   Globe, 
-  Menu, 
-  X, 
   ArrowRight, 
   ExternalLink,
   Github,
@@ -20,7 +19,6 @@ import {
 gsap.registerPlugin(ScrollTrigger);
 
 function App() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [lenis, setLenis] = useState<Lenis | null>(null);
 
@@ -167,68 +165,56 @@ function App() {
     }
   };
 
+  const menuItems = [
+    {
+      label: 'home',
+      href: '#hero',
+      ariaLabel: 'Home',
+      rotation: -8,
+      hoverStyles: { bgColor: '#3b82f6', textColor: '#ffffff' }
+    },
+    {
+      label: 'services',
+      href: '#services',
+      ariaLabel: 'Services',
+      rotation: 8,
+      hoverStyles: { bgColor: '#10b981', textColor: '#ffffff' }
+    },
+    {
+      label: 'projects',
+      href: '#projects',
+      ariaLabel: 'Projects',
+      rotation: 8,
+      hoverStyles: { bgColor: '#f59e0b', textColor: '#ffffff' }
+    },
+    {
+      label: 'contact',
+      href: '#contact',
+      ariaLabel: 'Contact',
+      rotation: -8,
+      hoverStyles: { bgColor: '#8b5cf6', textColor: '#ffffff' }
+    }
+  ];
+
+  const handleMenuClick = (item: any) => {
+    const targetId = item.href.replace('#', '');
+    scrollToSection(targetId);
+  };
+
   return (
     <div className="min-h-screen bg-white text-black">
-      {/* Invisible Navbar */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-black/10 backdrop-blur-sm' : 'bg-transparent'
-      }`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <div className="flex-shrink-0">
-              <button 
-                onClick={() => scrollToSection('hero')}
-                className="text-2xl font-bold text-white hover:text-gray-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
-              >
-                Harsh Dev
-              </button>
-            </div>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:block">
-              <div className="ml-10 flex items-baseline space-x-4">
-                {['Home', 'Services', 'Projects', 'Contact'].map((item) => (
-                  <button
-                    key={item}
-                    onClick={() => scrollToSection(item.toLowerCase() === 'home' ? 'hero' : item.toLowerCase())}
-                    className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
-                  >
-                    {item}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Mobile menu button */}
-            <div className="md:hidden">
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-white hover:text-gray-300 p-2 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
-              >
-                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Navigation Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden bg-black/95 backdrop-blur-sm">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              {['Home', 'Services', 'Projects', 'Contact'].map((item) => (
-                <button
-                  key={item}
-                  onClick={() => scrollToSection(item.toLowerCase() === 'home' ? 'hero' : item.toLowerCase())}
-                  className="text-white hover:text-gray-300 block px-3 py-2 text-base font-medium w-full text-left transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </nav>
+      {/* BubbleMenu Navigation */}
+      <BubbleMenu
+        logo={<span style={{ fontWeight: 700, fontSize: '1.5rem', color: '#000' }}>Harsh Dev</span>}
+        items={menuItems}
+        menuAriaLabel="Toggle navigation"
+        menuBg="#ffffff"
+        menuContentColor="#111111"
+        useFixedPosition={true}
+        animationEase="back.out(1.5)"
+        animationDuration={0.5}
+        staggerDelay={0.12}
+      />
 
       {/* Hero Section */}
       <section id="hero" className="bg-black text-white min-h-screen flex items-center justify-center relative overflow-hidden">
