@@ -327,6 +327,11 @@ export default function BubbleMenu({
             'z-[1000]'
           ].join(' ')}
           aria-hidden={!isMenuOpen}
+          style={{
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            backgroundColor: 'rgba(0, 0, 0, 0.3)'
+          }}
         >
           <ul
             className={[
@@ -357,11 +362,15 @@ export default function BubbleMenu({
                   aria-label={item.ariaLabel || item.label}
                   onClick={(e) => {
                     e.preventDefault();
-                    const targetId = item.href.replace('#', '');
-                    const element = document.getElementById(targetId);
-                    if (element) {
-                      element.scrollIntoView({ behavior: 'smooth' });
+                    if (item.href && item.href.startsWith('#')) {
+                      const targetId = item.href.replace('#', '');
+                      const element = document.getElementById(targetId);
+                      if (element) {
+                        element.scrollIntoView({ behavior: 'smooth' });
+                      }
                     }
+                    // Close the menu after clicking
+                    setIsMenuOpen(false);
                   }}
                   className={[
                     'pill-link',

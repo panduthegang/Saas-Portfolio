@@ -21,6 +21,7 @@ gsap.registerPlugin(ScrollTrigger);
 function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [lenis, setLenis] = useState<Lenis | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     // GSAP animations setup
@@ -196,10 +197,6 @@ function App() {
     }
   ];
 
-  const handleMenuClick = (item: any) => {
-    const targetId = item.href.replace('#', '');
-    scrollToSection(targetId);
-  };
 
   return (
     <div className="min-h-screen bg-white text-black">
@@ -207,6 +204,7 @@ function App() {
       <BubbleMenu
         logo={<span style={{ fontWeight: 700, fontSize: '1.5rem', color: '#000' }}>Harsh Dev</span>}
         items={menuItems}
+        onMenuClick={setIsMenuOpen}
         menuAriaLabel="Toggle navigation"
         menuBg="#ffffff"
         menuContentColor="#111111"
