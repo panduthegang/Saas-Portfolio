@@ -1,0 +1,26 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="60" cy="60" r="60" fill="#000000"/>
+  
+  <!-- Inner Circle -->
+  <circle cx="60" cy="60" r="50" fill="none" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Code Brackets -->
+  <path d="M35 45L25 60L35 75" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M85 45L95 60L85 75" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Center H -->
+  <path d="M45 45V75M75 45V75M45 60H75" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Decorative Dots -->
+  <circle cx="60" cy="30" r="2" fill="#ffffff"/>
+  <circle cx="60" cy="90" r="2" fill="#ffffff"/>
+  <circle cx="30" cy="60" r="2" fill="#ffffff"/>
+  <circle cx="90" cy="60" r="2" fill="#ffffff"/>
+  
+  <!-- Corner Accents -->
+  <path d="M20 20L30 20L20 30" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M100 20L90 20L100 30" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M20 100L30 100L20 90" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M100 100L90 100L100 90" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -1,7 +1,23 @@
 {
-  "name": "vite-react-typescript-starter",
+  "name": "harsh-rathod-portfolio",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.3.0",
+  "description": "Modern Full Stack Developer Portfolio - Harsh Rathod",
+  "author": "Harsh Rathod <panduthegang@gmail.com>",
+  "homepage": "https://harsh-rathod-portfolio.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/panduthegang/harsh-rathod-portfolio.git"
+  },
+  "keywords": [
+    "portfolio",
+    "full-stack-developer",
+    "react",
+    "typescript",
+    "web-development",
+    "harsh-rathod"
+  ],
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite",
