@@ -90,3 +90,53 @@ body {
 .marquee-content {
   width: max-content;
 }
+/* Performance optimizations */
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+  
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Low-end device optimizations */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: clamp(2rem, 8vw, 4rem) !important;
+  }
+  
+  .hero-subtitle {
+    font-size: clamp(1rem, 4vw, 1.5rem) !important;
+  }
+  
+  /* Reduce complexity on mobile */
+  .service-card,
+  .project-card,
+  .testimonial-card {
+    transform: none !important;
+  }
+  
+  .service-card:hover,
+  .project-card:hover,
+  .testimonial-card:hover {
+    transform: none !important;
+  }
+}
+
+/* GPU acceleration hints for supported devices */
+@supports (transform: translateZ(0)) {
+  .hero-title,
+  .hero-subtitle,
+  .hero-buttons,
+  .service-card,
+  .project-card,
+  .testimonial-card {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+}

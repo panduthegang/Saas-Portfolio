@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Lenis from '@studio-freight/lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import FaultyTerminal from './components/FaultyTerminal';
+import OptimizedTerminal from './components/OptimizedTerminal';
 import BubbleMenu from './components/BubbleMenu';
+import { usePerformanceOptimization } from './hooks/usePerformanceOptimization';
 import { 
   Code2, 
   Database, 
@@ -22,123 +23,150 @@ function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [lenis, setLenis] = useState<Lenis | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { capabilities, settings, isReady } = usePerformanceOptimization();
 
   useEffect(() => {
+    if (!isReady || !settings) return;
+
     // GSAP animations setup
     const ctx = gsap.context(() => {
+      const duration = settings.animationDuration;
+      const ease = settings.enableComplexAnimations ? 'power3.out' : 'power2.out';
+
       // Hero section animations
-      gsap.fromTo('.hero-title', 
-        { y: 100, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1.2, ease: 'power3.out', delay: 0.2 }
-      );
-      
-      gsap.fromTo('.hero-subtitle', 
-        { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1, ease: 'power3.out', delay: 0.5 }
-      );
-      
-      gsap.fromTo('.hero-buttons', 
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', delay: 0.8 }
-      );
+      if (settings.enableComplexAnimations) {
+        gsap.fromTo('.hero-title', 
+          { y: 100, opacity: 0 },
+          { y: 0, opacity: 1, duration: duration * 1.5, ease, delay: 0.2 }
+        );
+        
+        gsap.fromTo('.hero-subtitle', 
+          { y: 50, opacity: 0 },
+          { y: 0, opacity: 1, duration: duration * 1.25, ease, delay: 0.5 }
+        );
+        
+        gsap.fromTo('.hero-buttons', 
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: duration, ease, delay: 0.8 }
+        );
+      } else {
+        // Simple fade-in for low-end devices
+        gsap.set(['.hero-title', '.hero-subtitle', '.hero-buttons'], { opacity: 0 });
+        gsap.to(['.hero-title', '.hero-subtitle', '.hero-buttons'], {
+          opacity: 1,
+          duration: duration,
+          stagger: 0.1
+        });
+      }
 
       // Section animations on scroll
-      gsap.utils.toArray('.animate-on-scroll').forEach((element: any) => {
-        gsap.fromTo(element, 
-          { y: 60, opacity: 0 },
+      if (settings.enableComplexAnimations) {
+        gsap.utils.toArray('.animate-on-scroll').forEach((element: any) => {
+          gsap.fromTo(element, 
+            { y: 60, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: duration,
+              ease,
+              scrollTrigger: {
+                trigger: element,
+                start: 'top 85%',
+                end: 'bottom 15%',
+                toggleActions: 'play none none reverse'
+              }
+            }
+          );
+        });
+      }
+
+      // Service cards stagger animation
+      if (settings.enableComplexAnimations) {
+        gsap.fromTo('.service-card', 
+          { y: 80, opacity: 0, scale: 0.9 },
           {
             y: 0,
             opacity: 1,
-            duration: 0.8,
-            ease: 'power3.out',
+            scale: 1,
+            duration: duration * 0.75,
+            ease,
+            stagger: settings.throttleAnimations ? 0.1 : 0.2,
             scrollTrigger: {
-              trigger: element,
-              start: 'top 85%',
-              end: 'bottom 15%',
+              trigger: '.services-grid',
+              start: 'top 80%',
               toggleActions: 'play none none reverse'
             }
           }
         );
-      });
-
-      // Service cards stagger animation
-      gsap.fromTo('.service-card', 
-        { y: 80, opacity: 0, scale: 0.9 },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 0.6,
-          ease: 'power3.out',
-          stagger: 0.2,
-          scrollTrigger: {
-            trigger: '.services-grid',
-            start: 'top 80%',
-            toggleActions: 'play none none reverse'
-          }
-        }
-      );
+      }
 
       // Project cards stagger animation
-      gsap.fromTo('.project-card', 
-        { y: 80, opacity: 0, scale: 0.95 },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 0.7,
-          ease: 'power3.out',
-          stagger: 0.15,
-          scrollTrigger: {
-            trigger: '.projects-grid',
-            start: 'top 80%',
-            toggleActions: 'play none none reverse'
+      if (settings.enableComplexAnimations) {
+        gsap.fromTo('.project-card', 
+          { y: 80, opacity: 0, scale: 0.95 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: duration * 0.875,
+            ease,
+            stagger: settings.throttleAnimations ? 0.08 : 0.15,
+            scrollTrigger: {
+              trigger: '.projects-grid',
+              start: 'top 80%',
+              toggleActions: 'play none none reverse'
+            }
           }
-        }
-      );
+        );
+      }
 
       // Testimonial cards animation
-      gsap.fromTo('.testimonial-card', 
-        { y: 60, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          ease: 'power3.out',
-          stagger: 0.2,
-          scrollTrigger: {
-            trigger: '.testimonials-grid',
-            start: 'top 80%',
-            toggleActions: 'play none none reverse'
+      if (settings.enableComplexAnimations) {
+        gsap.fromTo('.testimonial-card', 
+          { y: 60, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: duration,
+            ease,
+            stagger: settings.throttleAnimations ? 0.1 : 0.2,
+            scrollTrigger: {
+              trigger: '.testimonials-grid',
+              start: 'top 80%',
+              toggleActions: 'play none none reverse'
+            }
           }
-        }
-      );
+        );
+      }
     });
 
-    // Initialize Lenis
-    const lenisInstance = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      direction: 'vertical',
-      gestureDirection: 'vertical',
-      smooth: true,
-      mouseMultiplier: 1,
-      smoothTouch: false,
-      touchMultiplier: 2,
-      infinite: false,
-      normalizeWheel: true,
-    });
+    // Initialize Lenis only if smooth scrolling is enabled
+    let lenisInstance: Lenis | null = null;
+    if (settings.enableSmoothScrolling) {
+      lenisInstance = new Lenis({
+        duration: settings.throttleAnimations ? 0.8 : 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        direction: 'vertical',
+        gestureDirection: 'vertical',
+        smooth: true,
+        mouseMultiplier: settings.throttleAnimations ? 0.5 : 1,
+        smoothTouch: false,
+        touchMultiplier: settings.throttleAnimations ? 1 : 2,
+        infinite: false,
+        normalizeWheel: true,
+      });
 
-    setLenis(lenisInstance);
-    
-    // Connect Lenis with GSAP ScrollTrigger
-    lenisInstance.on('scroll', ScrollTrigger.update);
-    
-    gsap.ticker.add((time) => {
-      lenisInstance.raf(time * 1000);
-    });
-    
-    gsap.ticker.lagSmoothing(0);
+      setLenis(lenisInstance);
+      
+      // Connect Lenis with GSAP ScrollTrigger
+      lenisInstance.on('scroll', ScrollTrigger.update);
+      
+      gsap.ticker.add((time) => {
+        lenisInstance!.raf(time * 1000);
+      });
+      
+      gsap.ticker.lagSmoothing(0);
+    }
 
 
     const handleScroll = () => {
@@ -149,19 +177,25 @@ function App() {
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      lenisInstance.destroy();
+      if (lenisInstance) {
+        lenisInstance.destroy();
+      }
       ctx.revert();
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
-  }, []);
+  }, [isReady, settings]);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
-    if (element && lenis) {
+    if (element && lenis && settings?.enableSmoothScrolling) {
       lenis.scrollTo(element, { 
-        duration: 2,
+        duration: settings.throttleAnimations ? 1 : 2,
         easing: (t) => 1 - Math.pow(1 - t, 3)
       });
+      setIsMenuOpen(false);
+    } else if (element) {
+      // Fallback to native scrolling
+      element.scrollIntoView({ behavior: 'smooth' });
       setIsMenuOpen(false);
     }
   };
@@ -198,6 +232,15 @@ function App() {
   ];
 
 
+  // Show loading state while detecting capabilities
+  if (!isReady || !capabilities) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white text-xl">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white text-black">
       {/* BubbleMenu Navigation */}
@@ -209,35 +252,18 @@ function App() {
         menuBg="#ffffff"
         menuContentColor="#111111"
         useFixedPosition={true}
-        animationEase="back.out(1.5)"
-        animationDuration={0.5}
-        staggerDelay={0.12}
+        animationEase={settings.enableComplexAnimations ? "back.out(1.5)" : "power2.out"}
+        animationDuration={settings.animationDuration}
+        staggerDelay={settings.throttleAnimations ? 0.06 : 0.12}
       />
 
       {/* Hero Section */}
       <section id="hero" className="bg-black text-white min-h-screen flex items-center justify-center relative overflow-hidden">
         {/* Animated Terminal Background */}
-        <div className="absolute inset-0 opacity-20">
-          <FaultyTerminal
-            scale={1.5}
-            gridMul={[2, 1]}
-            digitSize={1.2}
-            timeScale={1}
-            pause={false}
-            scanlineIntensity={0.5}
-            glitchAmount={1}
-            flickerAmount={1}
-            noiseAmp={1}
-            chromaticAberration={0}
-            dither={0}
-            curvature={0.1}
-            tint="#ffffff"
-            mouseReact={true}
-            mouseStrength={0.5}
-            pageLoadAnimation={false}
-            brightness={1}
-          />
-        </div>
+        <OptimizedTerminal 
+          capabilities={capabilities}
+          className="absolute inset-0 opacity-20"
+        />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="text-center relative z-10">
@@ -253,14 +279,18 @@ function App() {
             <div className="hero-buttons flex flex-col sm:flex-row gap-6 justify-center items-center">
               <button 
                 onClick={() => scrollToSection('contact')}
-                className="bg-white text-black px-8 py-4 text-lg font-semibold rounded-lg hover:bg-gray-100 transform hover:-translate-y-1 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-4 focus:ring-offset-black inline-flex items-center gap-2"
+                className={`bg-white text-black px-8 py-4 text-lg font-semibold rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-4 focus:ring-offset-black inline-flex items-center gap-2 ${
+                  settings.enableComplexAnimations ? 'transform hover:-translate-y-1 transition-all duration-200' : 'transition-colors duration-200'
+                }`}
               >
                 Hire Me
                 <ArrowRight size={20} />
               </button>
               <button 
                 onClick={() => scrollToSection('projects')}
-                className="border-2 border-white text-white px-8 py-4 text-lg font-semibold rounded-lg hover:bg-white hover:text-black transform hover:-translate-y-1 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-4 focus:ring-offset-black inline-flex items-center gap-2"
+                className={`border-2 border-white text-white px-8 py-4 text-lg font-semibold rounded-lg hover:bg-white hover:text-black focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-4 focus:ring-offset-black inline-flex items-center gap-2 ${
+                  settings.enableComplexAnimations ? 'transform hover:-translate-y-1 transition-all duration-200' : 'transition-colors duration-200'
+                }`}
               >
                 View Projects
                 <ExternalLink size={20} />
@@ -301,7 +331,9 @@ function App() {
             ].map((service, index) => (
               <div 
                 key={index}
-                className="service-card p-8 border-2 border-black rounded-lg hover:bg-black hover:text-white transform hover:-translate-y-2 transition-all duration-300 group"
+                className={`service-card p-8 border-2 border-black rounded-lg hover:bg-black hover:text-white group ${
+                  settings.enableComplexAnimations ? 'transform hover:-translate-y-2 transition-all duration-300' : 'transition-colors duration-200'
+                }`}
               >
                 <div className="mb-6 group-hover:text-white">
                   {service.icon}
@@ -322,46 +354,36 @@ function App() {
           <div className="text-center mb-16 animate-on-scroll">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">Featured Projects</h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              A selection of recent work showcasing modern web development techniques
+              A selection of my recent projects showcasing AI, real-time collaboration, and e-commerce solutions
             </p>
           </div>
 
           <div className="projects-grid grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                title: "E-Commerce Platform",
-                tech: "React, Node.js, PostgreSQL",
-                description: "Full-stack e-commerce solution with payment processing"
+                title: "Verifai",
+                tech: "React.js, Tailwind CSS, Firebase, Gemini API, D3.js",
+                description: "AI-powered Fake News Detection and Content Analysis Platform with multilingual support and image verification",
+                link: "https://verifai-by-house-stark.vercel.app"
               },
               {
-                title: "Task Management App",
-                tech: "TypeScript, Express, MongoDB",
-                description: "Collaborative project management with real-time updates"
+                title: "LiveDocs",
+                tech: "Next.js, Tailwind CSS, Liveblocks, Clerk",
+                description: "Real-time collaborative document editor with user authentication and version history",
+                link: "https://livedocs-by-harsh-rathod.vercel.app/sign-in"
               },
               {
-                title: "Analytics Dashboard",
-                tech: "React, Python, AWS",
-                description: "Data visualization platform with machine learning insights"
-              },
-              {
-                title: "Social Media App",
-                tech: "Next.js, Supabase, Tailwind",
-                description: "Modern social platform with real-time messaging"
-              },
-              {
-                title: "Booking System",
-                tech: "Vue.js, Laravel, MySQL",
-                description: "Appointment scheduling with calendar integration"
-              },
-              {
-                title: "Learning Platform",
-                tech: "React, Django, Redis",
-                description: "Educational content delivery with progress tracking"
+                title: "SkyStore",
+                tech: "Next.js, Tailwind CSS, Appwrite",
+                description: "Modern e-commerce web application with secure authentication and smooth shopping experience",
+                link: "https://sky-store-by-harsh-rathod.vercel.app/sign-in"
               }
             ].map((project, index) => (
               <div 
                 key={index}
-                className="project-card border-2 border-white rounded-lg overflow-hidden hover:bg-white hover:text-black transform hover:-translate-y-2 transition-all duration-300 group"
+                className={`project-card border-2 border-white rounded-lg overflow-hidden hover:bg-white hover:text-black group ${
+                  settings.enableComplexAnimations ? 'transform hover:-translate-y-2 transition-all duration-300' : 'transition-colors duration-200'
+                }`}
               >
                 <div className="h-48 bg-gray-800 group-hover:bg-gray-200 flex items-center justify-center">
                   <Code2 size={64} className="text-gray-600 group-hover:text-gray-400" />
@@ -372,6 +394,17 @@ function App() {
                   <p className="text-gray-300 group-hover:text-gray-700 leading-relaxed">
                     {project.description}
                   </p>
+                  {project.link && (
+                    <a
+                      href={project.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-white group-hover:text-black font-semibold hover:underline"
+                    >
+                      View Project
+                      <ExternalLink size={16} />
+                    </a>
+                  )}
                 </div>
               </div>
             ))}
@@ -391,7 +424,7 @@ function App() {
 
           <div className="relative overflow-hidden">
             <div className="marquee-container">
-              <div className="marquee-content flex gap-8 animate-marquee pause-marquee">
+              <div className={`marquee-content flex gap-8 ${settings.enableComplexAnimations ? 'animate-marquee pause-marquee' : ''}`}>
                 {[
                   {
                     quote: "Harsh delivered an exceptional e-commerce platform that exceeded our expectations. The attention to detail and performance optimization was outstanding.",
@@ -423,7 +456,7 @@ function App() {
                     author: "James Miller",
                     role: "CTO, StartupFlow"
                   }
-                ].concat([
+                ].concat(settings.enableComplexAnimations ? [
                   {
                     quote: "Harsh delivered an exceptional e-commerce platform that exceeded our expectations. The attention to detail and performance optimization was outstanding.",
                     author: "Sarah Johnson",
@@ -454,10 +487,12 @@ function App() {
                     author: "James Miller",
                     role: "CTO, StartupFlow"
                   }
-                ]).map((testimonial, index) => (
+                ] : []).map((testimonial, index) => (
                   <div 
                     key={index}
-                    className="testimonial-card flex-shrink-0 w-80 p-6 border-2 border-black rounded-lg hover:bg-black hover:text-white transition-all duration-300 group"
+                    className={`testimonial-card flex-shrink-0 w-80 p-6 border-2 border-black rounded-lg hover:bg-black hover:text-white group ${
+                      settings.enableComplexAnimations ? 'transition-all duration-300' : 'transition-colors duration-200'
+                    }`}
                   >
                     <p className="text-base mb-4 leading-relaxed">"{testimonial.quote}"</p>
                     <div className="pt-4 border-t-2 border-gray-300 group-hover:border-gray-600">
@@ -485,15 +520,19 @@ function App() {
           <div className="flex flex-col items-center gap-8">
             <div className="flex flex-col sm:flex-row gap-6">
               <a 
-                href="mailto:harsh@example.com"
-                className="bg-white text-black px-8 py-4 text-lg font-semibold rounded-lg hover:bg-gray-100 transform hover:-translate-y-1 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-4 focus:ring-offset-black inline-flex items-center gap-3"
+                href="mailto:panduthegang@gmail.com"
+                className={`bg-white text-black px-8 py-4 text-lg font-semibold rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-4 focus:ring-offset-black inline-flex items-center gap-3 ${
+                  settings.enableComplexAnimations ? 'transform hover:-translate-y-1 transition-all duration-200' : 'transition-colors duration-200'
+                }`}
               >
                 <Mail size={20} />
                 Send Email
               </a>
               <a 
-                href="tel:+1234567890"
-                className="border-2 border-white text-white px-8 py-4 text-lg font-semibold rounded-lg hover:bg-white hover:text-black transform hover:-translate-y-1 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-4 focus:ring-offset-black inline-flex items-center gap-3"
+                href="tel:+918451811626"
+                className={`border-2 border-white text-white px-8 py-4 text-lg font-semibold rounded-lg hover:bg-white hover:text-black focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-4 focus:ring-offset-black inline-flex items-center gap-3 ${
+                  settings.enableComplexAnimations ? 'transform hover:-translate-y-1 transition-all duration-200' : 'transition-colors duration-200'
+                }`}
               >
                 <Phone size={20} />
                 Call Now
@@ -502,16 +541,18 @@ function App() {
 
             <div className="flex gap-6 mt-8">
               {[
-                { icon: <Github size={24} />, href: "https://github.com", label: "GitHub" },
-                { icon: <Linkedin size={24} />, href: "https://linkedin.com", label: "LinkedIn" },
-                { icon: <Mail size={24} />, href: "mailto:harsh@example.com", label: "Email" }
+                { icon: <Github size={24} />, href: "https://github.com/panduthegang", label: "GitHub" },
+                { icon: <Linkedin size={24} />, href: "https://www.linkedin.com/in/harsh-rathod-2591b0292/", label: "LinkedIn" },
+                { icon: <Mail size={24} />, href: "mailto:panduthegang@gmail.com", label: "Email" }
               ].map((social, index) => (
                 <a
                   key={index}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-3 border-2 border-white rounded-lg hover:bg-white hover:text-black transform hover:-translate-y-1 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-4 focus:ring-offset-black"
+                  className={`p-3 border-2 border-white rounded-lg hover:bg-white hover:text-black focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-4 focus:ring-offset-black ${
+                    settings.enableComplexAnimations ? 'transform hover:-translate-y-1 transition-all duration-200' : 'transition-colors duration-200'
+                  }`}
                   aria-label={social.label}
                 >
                   {social.icon}
