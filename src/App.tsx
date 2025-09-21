@@ -4,6 +4,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import OptimizedTerminal from './components/OptimizedTerminal';
 import BubbleMenu from './components/BubbleMenu';
+import ImageCarousel from './components/ImageCarousel';
 import { usePerformanceOptimization } from './hooks/usePerformanceOptimization';
 import { 
   Code2, 
@@ -14,7 +15,10 @@ import {
   Github,
   Linkedin,
   Mail,
-  Phone
+  Phone,
+  Trophy,
+  Calendar,
+  Award
 } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -223,6 +227,13 @@ function App() {
       hoverStyles: { bgColor: '#f59e0b', textColor: '#ffffff' }
     },
     {
+      label: 'achievements',
+      href: '#achievements',
+      ariaLabel: 'Achievements',
+      rotation: -8,
+      hoverStyles: { bgColor: '#ef4444', textColor: '#ffffff' }
+    },
+    {
       label: 'contact',
       href: '#contact',
       ariaLabel: 'Contact',
@@ -364,19 +375,22 @@ function App() {
                 title: "Verifai",
                 tech: "React.js, Tailwind CSS, Firebase, Gemini API, D3.js",
                 description: "AI-powered Fake News Detection and Content Analysis Platform with multilingual support and image verification",
-                link: "https://verifai-by-house-stark.vercel.app"
+                link: "https://verifai-by-house-stark.vercel.app",
+                image: "/Verifai.png"
               },
               {
                 title: "LiveDocs",
                 tech: "Next.js, Tailwind CSS, Liveblocks, Clerk",
                 description: "Real-time collaborative document editor with user authentication and version history",
-                link: "https://livedocs-by-harsh-rathod.vercel.app/sign-in"
+                link: "https://livedocs-by-harsh-rathod.vercel.app/sign-in",
+                image: "/Live-Docs.png"
               },
               {
                 title: "SkyStore",
                 tech: "Next.js, Tailwind CSS, Appwrite",
                 description: "Modern e-commerce web application with secure authentication and smooth shopping experience",
-                link: "https://sky-store-by-harsh-rathod.vercel.app/sign-in"
+                link: "https://sky-store-by-harsh-rathod.vercel.app/sign-in",
+                image: "/Sky-Store.png"
               }
             ].map((project, index) => (
               <div 
@@ -385,8 +399,16 @@ function App() {
                   settings.enableComplexAnimations ? 'transform hover:-translate-y-2 transition-all duration-300' : 'transition-colors duration-200'
                 }`}
               >
-                <div className="h-48 bg-gray-800 group-hover:bg-gray-200 flex items-center justify-center">
-                  <Code2 size={64} className="text-gray-600 group-hover:text-gray-400" />
+                <div className="h-48 bg-gray-800 group-hover:bg-gray-200 flex items-center justify-center overflow-hidden relative">
+                  {project.image ? (
+                    <img 
+                      src={project.image} 
+                      alt={`${project.title} screenshot`}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <Code2 size={64} className="text-gray-600 group-hover:text-gray-400" />
+                  )}
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-2">{project.title}</h3>
@@ -408,6 +430,106 @@ function App() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Achievements Section */}
+      <section id="achievements" className="bg-white text-black py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16 animate-on-scroll">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Achievements</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Recognition and awards from hackathons and competitive programming events
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+            {/* First Achievement */}
+            <div className={`group relative bg-black text-white rounded-3xl overflow-hidden ${settings.enableComplexAnimations ? 'transform transition-all duration-700 hover:scale-105 hover:shadow-2xl' : 'transition-all duration-300'}`}>
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-800 opacity-90"></div>
+              
+              <div className="relative z-10 p-8 md:p-12 h-full flex flex-col">
+                <div className="flex items-start justify-between mb-8">
+                  <div className={`p-4 bg-white rounded-2xl ${settings.enableComplexAnimations ? 'transform transition-all duration-500 group-hover:rotate-12 group-hover:scale-110' : ''}`}>
+                    <Trophy size={32} className="text-black" />
+                  </div>
+                  <div className="bg-white text-black px-6 py-2 rounded-full font-bold text-sm tracking-wide">
+                    WINNER
+                  </div>
+                </div>
+                
+                <div className="flex-1 flex flex-col">
+                  <h3 className="text-2xl md:text-3xl font-bold mb-4 leading-tight">
+                    Google Developer Group
+                  </h3>
+                  <p className="text-lg text-gray-300 mb-6 font-medium">
+                    Code the Cloud Edition
+                  </p>
+                  
+                  {/* Certificate Display */}
+                  <div className="flex-1 mb-8">
+                    <div className={`bg-white rounded-2xl p-1 ${settings.enableComplexAnimations ? 'transform transition-all duration-500 group-hover:scale-105 group-hover:shadow-xl' : 'transition-all duration-300'}`}>
+                      <div className="bg-gray-100 rounded-xl aspect-[4/3] flex items-center justify-center overflow-hidden">
+                        <img 
+                          src="https://raw.githubusercontent.com/panduthegang/Verifai-News_Detection-System/refs/heads/main/public/Harsh-CCD.jpg" 
+                          alt="Google Developer Group Winner Certificate"
+                          className="w-full h-full object-cover rounded-xl"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <p className="text-gray-300 leading-relaxed">
+                    Winner of Google's premier cloud hackathon, competing against hundreds of developers worldwide.
+                  </p>
+                </div>
+                
+                <div className={`mt-8 w-full h-1 bg-white rounded-full ${settings.enableComplexAnimations ? 'transform transition-all duration-700 group-hover:bg-gray-300' : ''}`}></div>
+              </div>
+            </div>
+
+            {/* Second Achievement */}
+            <div className={`group relative bg-white text-black border-4 border-black rounded-3xl overflow-hidden ${settings.enableComplexAnimations ? 'transform transition-all duration-700 hover:scale-105 hover:shadow-2xl hover:bg-black hover:text-white' : 'transition-all duration-300'}`}>
+              <div className="relative z-10 p-8 md:p-12 h-full flex flex-col">
+                <div className="flex items-start justify-between mb-8">
+                  <div className={`p-4 bg-black group-hover:bg-white rounded-2xl ${settings.enableComplexAnimations ? 'transform transition-all duration-500 group-hover:rotate-12 group-hover:scale-110' : ''}`}>
+                    <Award size={32} className="text-white group-hover:text-black" />
+                  </div>
+                  <div className="bg-black group-hover:bg-white text-white group-hover:text-black px-6 py-2 rounded-full font-bold text-sm tracking-wide transition-colors duration-300">
+                    RUNNER-UP
+                  </div>
+                </div>
+                
+                <div className="flex-1 flex flex-col">
+                  <h3 className="text-2xl md:text-3xl font-bold mb-4 leading-tight">
+                    Suprathon
+                  </h3>
+                  <p className="text-lg text-gray-600 group-hover:text-gray-300 mb-6 font-medium transition-colors duration-300">
+                    by Suprazo Technologies
+                  </p>
+                  
+                  {/* Certificate Display */}
+                  <div className="flex-1 mb-8">
+                    <div className={`bg-black group-hover:bg-white rounded-2xl p-1 transition-colors duration-300 ${settings.enableComplexAnimations ? 'transform transition-all duration-500 group-hover:scale-105 group-hover:shadow-xl' : ''}`}>
+                      <div className="bg-gray-800 group-hover:bg-gray-100 rounded-xl aspect-[4/3] flex items-center justify-center overflow-hidden transition-colors duration-300">
+                        <img 
+                          src="https://raw.githubusercontent.com/panduthegang/Verifai-News_Detection-System/refs/heads/main/public/Harsh-Suprathon.png" 
+                          alt="Suprathon Runner-up Certificate"
+                          className="w-full h-full object-cover rounded-xl"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <p className="text-gray-600 group-hover:text-gray-300 leading-relaxed transition-colors duration-300">
+                    Runner-up in Suprazo Technologies' intensive hackathon, showcasing innovative full-stack solutions.
+                  </p>
+                </div>
+                
+                <div className={`mt-8 w-full h-1 bg-black group-hover:bg-white rounded-full transition-colors duration-300`}></div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -568,6 +690,7 @@ function App() {
           </div>
         </div>
       </section>
+
     </div>
   );
 }
