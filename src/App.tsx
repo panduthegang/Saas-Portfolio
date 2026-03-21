@@ -3,14 +3,12 @@ import {
   Github,
   Linkedin,
   Mail,
-  ExternalLink,
   ArrowUpRight,
   Globe,
   Cpu,
   Layers,
   Code2,
   Terminal,
-  Award,
   ShieldCheck
 } from "lucide-react";
 import { DATA } from "./constants";
@@ -39,14 +37,14 @@ const Nav = () => {
 
   const menuVars = {
     initial: { scaleY: 0 },
-    animate: { scaleY: 1, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
-    exit: { scaleY: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.3 } }
+    animate: { scaleY: 1, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const } },
+    exit: { scaleY: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: 0.3 } }
   };
 
   const linkVars = {
     initial: { y: "100%", rotate: 5 },
-    open: { y: 0, rotate: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
-    exit: { y: "100%", rotate: -5, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } }
+    open: { y: 0, rotate: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const } },
+    exit: { y: "100%", rotate: -5, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const } }
   };
 
   const containerVars = {
@@ -120,8 +118,6 @@ const Nav = () => {
 
 export default function App() {
   const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll();
-  const y = useTransform(scrollYProgress, [0, 1], [0, -100]);
 
   return (
     <div ref={containerRef} className="relative min-h-screen vintage-grid overflow-x-hidden">
@@ -260,7 +256,8 @@ export default function App() {
                   <img
                     src={project.image}
                     alt={project.title}
-                    className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 group-hover:opacity-100 transition-all duration-700"
+                    referrerPolicy="no-referrer"
+                    className="absolute inset-0 w-full h-full object-cover scale-100 opacity-100 brightness-100 group-hover:scale-105 transition-all duration-700"
                   />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center opacity-10 group-hover:scale-110 transition-transform duration-1000">
