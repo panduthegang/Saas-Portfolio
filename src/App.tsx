@@ -1,698 +1,429 @@
-import React, { useState, useEffect } from 'react';
-import Lenis from '@studio-freight/lenis';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import OptimizedTerminal from './components/OptimizedTerminal';
-import BubbleMenu from './components/BubbleMenu';
-import ImageCarousel from './components/ImageCarousel';
-import { usePerformanceOptimization } from './hooks/usePerformanceOptimization';
-import { 
-  Code2, 
-  Database, 
-  Globe, 
-  ArrowRight, 
-  ExternalLink,
+import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
+import {
   Github,
   Linkedin,
   Mail,
-  Phone,
-  Trophy,
-  Calendar,
-  Award
-} from 'lucide-react';
+  ExternalLink,
+  ArrowUpRight,
+  Globe,
+  Cpu,
+  Layers,
+  Code2,
+  Terminal,
+  Award,
+  ShieldCheck
+} from "lucide-react";
+import { DATA } from "./constants";
+import { useRef, useState, useEffect } from "react";
 
-gsap.registerPlugin(ScrollTrigger);
+const SectionHeader = ({ title, number }: { title: string; number: string }) => (
+  <div className="flex items-baseline gap-4 border-b border-muted/20 pb-4 mb-12">
+    <span className="font-mono text-xs text-muted">{number}</span>
+    <h2 className="font-serif italic text-4xl md:text-5xl text-ink">{title}</h2>
+  </div>
+);
 
-function App() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [lenis, setLenis] = useState<Lenis | null>(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { capabilities, settings, isReady } = usePerformanceOptimization();
+const Nav = () => {
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    if (!isReady || !settings) return;
-
-    // GSAP animations setup
-    const ctx = gsap.context(() => {
-      const duration = settings.animationDuration;
-      const ease = settings.enableComplexAnimations ? 'power3.out' : 'power2.out';
-
-      // Hero section animations
-      if (settings.enableComplexAnimations) {
-        gsap.fromTo('.hero-title', 
-          { y: 100, opacity: 0 },
-          { y: 0, opacity: 1, duration: duration * 1.5, ease, delay: 0.2 }
-        );
-        
-        gsap.fromTo('.hero-subtitle', 
-          { y: 50, opacity: 0 },
-          { y: 0, opacity: 1, duration: duration * 1.25, ease, delay: 0.5 }
-        );
-        
-        gsap.fromTo('.hero-buttons', 
-          { y: 30, opacity: 0 },
-          { y: 0, opacity: 1, duration: duration, ease, delay: 0.8 }
-        );
-      } else {
-        // Simple fade-in for low-end devices
-        gsap.set(['.hero-title', '.hero-subtitle', '.hero-buttons'], { opacity: 0 });
-        gsap.to(['.hero-title', '.hero-subtitle', '.hero-buttons'], {
-          opacity: 1,
-          duration: duration,
-          stagger: 0.1
-        });
-      }
-
-      // Section animations on scroll
-      if (settings.enableComplexAnimations) {
-        gsap.utils.toArray('.animate-on-scroll').forEach((element: any) => {
-          gsap.fromTo(element, 
-            { y: 60, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: duration,
-              ease,
-              scrollTrigger: {
-                trigger: element,
-                start: 'top 85%',
-                end: 'bottom 15%',
-                toggleActions: 'play none none reverse'
-              }
-            }
-          );
-        });
-      }
-
-      // Service cards stagger animation
-      if (settings.enableComplexAnimations) {
-        gsap.fromTo('.service-card', 
-          { y: 80, opacity: 0, scale: 0.9 },
-          {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            duration: duration * 0.75,
-            ease,
-            stagger: settings.throttleAnimations ? 0.1 : 0.2,
-            scrollTrigger: {
-              trigger: '.services-grid',
-              start: 'top 80%',
-              toggleActions: 'play none none reverse'
-            }
-          }
-        );
-      }
-
-      // Project cards stagger animation
-      if (settings.enableComplexAnimations) {
-        gsap.fromTo('.project-card', 
-          { y: 80, opacity: 0, scale: 0.95 },
-          {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            duration: duration * 0.875,
-            ease,
-            stagger: settings.throttleAnimations ? 0.08 : 0.15,
-            scrollTrigger: {
-              trigger: '.projects-grid',
-              start: 'top 80%',
-              toggleActions: 'play none none reverse'
-            }
-          }
-        );
-      }
-
-      // Testimonial cards animation
-      if (settings.enableComplexAnimations) {
-        gsap.fromTo('.testimonial-card', 
-          { y: 60, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: duration,
-            ease,
-            stagger: settings.throttleAnimations ? 0.1 : 0.2,
-            scrollTrigger: {
-              trigger: '.testimonials-grid',
-              start: 'top 80%',
-              toggleActions: 'play none none reverse'
-            }
-          }
-        );
-      }
-    });
-
-    // Initialize Lenis only if smooth scrolling is enabled
-    let lenisInstance: Lenis | null = null;
-    if (settings.enableSmoothScrolling) {
-      lenisInstance = new Lenis({
-        duration: settings.throttleAnimations ? 0.8 : 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        direction: 'vertical',
-        gestureDirection: 'vertical',
-        smooth: true,
-        mouseMultiplier: settings.throttleAnimations ? 0.5 : 1,
-        smoothTouch: false,
-        touchMultiplier: settings.throttleAnimations ? 1 : 2,
-        infinite: false,
-        normalizeWheel: true,
-      });
-
-      setLenis(lenisInstance);
-      
-      // Connect Lenis with GSAP ScrollTrigger
-      lenisInstance.on('scroll', ScrollTrigger.update);
-      
-      gsap.ticker.add((time) => {
-        lenisInstance!.raf(time * 1000);
-      });
-      
-      gsap.ticker.lagSmoothing(0);
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
     }
-
-
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (lenisInstance) {
-        lenisInstance.destroy();
-      }
-      ctx.revert();
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      document.body.style.overflow = "";
     };
-  }, [isReady, settings]);
+  }, [isOpen]);
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element && lenis && settings?.enableSmoothScrolling) {
-      lenis.scrollTo(element, { 
-        duration: settings.throttleAnimations ? 1 : 2,
-        easing: (t) => 1 - Math.pow(1 - t, 3)
-      });
-      setIsMenuOpen(false);
-    } else if (element) {
-      // Fallback to native scrolling
-      element.scrollIntoView({ behavior: 'smooth' });
-      setIsMenuOpen(false);
-    }
+  const menuVars = {
+    initial: { scaleY: 0 },
+    animate: { scaleY: 1, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
+    exit: { scaleY: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.3 } }
   };
 
-  const menuItems = [
-    {
-      label: 'home',
-      href: '#hero',
-      ariaLabel: 'Home',
-      rotation: -8,
-      hoverStyles: { bgColor: '#3b82f6', textColor: '#ffffff' }
-    },
-    {
-      label: 'services',
-      href: '#services',
-      ariaLabel: 'Services',
-      rotation: 8,
-      hoverStyles: { bgColor: '#10b981', textColor: '#ffffff' }
-    },
-    {
-      label: 'projects',
-      href: '#projects',
-      ariaLabel: 'Projects',
-      rotation: 8,
-      hoverStyles: { bgColor: '#f59e0b', textColor: '#ffffff' }
-    },
-    {
-      label: 'achievements',
-      href: '#achievements',
-      ariaLabel: 'Achievements',
-      rotation: -8,
-      hoverStyles: { bgColor: '#ef4444', textColor: '#ffffff' }
-    },
-    {
-      label: 'contact',
-      href: '#contact',
-      ariaLabel: 'Contact',
-      rotation: -8,
-      hoverStyles: { bgColor: '#8b5cf6', textColor: '#ffffff' }
-    }
-  ];
+  const linkVars = {
+    initial: { y: "100%", rotate: 5 },
+    open: { y: 0, rotate: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
+    exit: { y: "100%", rotate: -5, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } }
+  };
 
-
-  // Show loading state while detecting capabilities
-  if (!isReady || !capabilities) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
-      </div>
-    );
-  }
+  const containerVars = {
+    initial: { transition: { staggerChildren: 0.09, staggerDirection: -1 } },
+    open: { transition: { delayChildren: 0.3, staggerChildren: 0.09, staggerDirection: 1 } },
+    exit: { transition: { staggerChildren: 0.05, staggerDirection: -1 } }
+  };
 
   return (
-    <div className="min-h-screen bg-white text-black">
-      {/* BubbleMenu Navigation */}
-      <BubbleMenu
-        logo={<span style={{ fontWeight: 700, fontSize: '1.5rem', color: '#000' }}>Harsh Dev</span>}
-        items={menuItems}
-        onMenuClick={setIsMenuOpen}
-        menuAriaLabel="Toggle navigation"
-        menuBg="#ffffff"
-        menuContentColor="#111111"
-        useFixedPosition={true}
-        animationEase={settings.enableComplexAnimations ? "back.out(1.5)" : "power2.out"}
-        animationDuration={settings.animationDuration}
-        staggerDelay={settings.throttleAnimations ? 0.06 : 0.12}
-      />
+    <>
+      <nav className="fixed top-0 left-0 w-full z-50 px-6 md:px-12 py-6 flex justify-between items-center bg-bg/70 backdrop-blur-lg border-b border-muted/10">
+        <a href="#" className="flex items-center gap-3 group">
+          <span className="font-serif italic text-2xl text-ink group-hover:text-accent transition-colors">Harsh Rathod</span>
+          <span className="font-mono text-[10px] text-muted hidden sm:inline-block tracking-widest uppercase mt-1">/ 2026</span>
+        </a>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="font-mono text-[10px] tracking-widest uppercase text-ink hover:text-bg hover:bg-ink transition-all px-6 py-2.5 rounded-full border border-ink/20"
+        >
+          {isOpen ? "Close" : "Menu"}
+        </button>
+      </nav>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            variants={menuVars}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="fixed inset-0 bg-ink text-bg z-40 flex flex-col justify-center items-center origin-top"
+          >
+            <motion.div
+              variants={containerVars}
+              initial="initial"
+              animate="open"
+              exit="exit"
+              className="flex flex-col items-center gap-4 md:gap-8"
+            >
+              {["Work", "About", "Contact"].map((item, i) => (
+                <div key={i} className="overflow-hidden py-2">
+                  <motion.a
+                    href={`#${item.toLowerCase()}`}
+                    onClick={() => setIsOpen(false)}
+                    variants={linkVars}
+                    className="text-6xl md:text-8xl lg:text-9xl font-serif italic tracking-tighter hover:text-accent transition-colors inline-block origin-bottom-left"
+                  >
+                    {item}
+                  </motion.a>
+                </div>
+              ))}
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ delay: 0.6, duration: 1 }}
+              className="absolute bottom-12 flex gap-8 font-mono text-xs uppercase tracking-widest opacity-50"
+            >
+              <a href={DATA.links.linkedin} target="_blank" rel="noreferrer" className="hover:text-accent transition-colors">LinkedIn</a>
+              <a href={DATA.links.github} target="_blank" rel="noreferrer" className="hover:text-accent transition-colors">GitHub</a>
+              <a href={`mailto:${DATA.email}`} className="hover:text-accent transition-colors">Email</a>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+};
+
+export default function App() {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll();
+  const y = useTransform(scrollYProgress, [0, 1], [0, -100]);
+
+  return (
+    <div ref={containerRef} className="relative min-h-screen vintage-grid overflow-x-hidden">
+      <div className="noise" />
+      <Nav />
 
       {/* Hero Section */}
-      <section id="hero" className="bg-black text-white min-h-screen flex items-center justify-center relative overflow-hidden">
-        {/* Animated Terminal Background */}
-        <OptimizedTerminal 
-          capabilities={capabilities}
-          className="absolute inset-0 opacity-20"
-        />
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="text-center relative z-10">
-            <h1 className="hero-title text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-              I Build Scalable Full Stack
-              <br />
-              <span className="text-white">Web Applications</span>
-            </h1>
-            <p className="hero-subtitle text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-              Modern, responsive, performance-driven solutions for businesses.
-            </p>
-            
-            <div className="hero-buttons flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <button 
-                onClick={() => scrollToSection('contact')}
-                className={`bg-white text-black px-8 py-4 text-lg font-semibold rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-4 focus:ring-offset-black inline-flex items-center gap-2 ${
-                  settings.enableComplexAnimations ? 'transform hover:-translate-y-1 transition-all duration-200' : 'transition-colors duration-200'
-                }`}
-              >
-                Hire Me
-                <ArrowRight size={20} />
-              </button>
-              <button 
-                onClick={() => scrollToSection('projects')}
-                className={`border-2 border-white text-white px-8 py-4 text-lg font-semibold rounded-lg hover:bg-white hover:text-black focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-4 focus:ring-offset-black inline-flex items-center gap-2 ${
-                  settings.enableComplexAnimations ? 'transform hover:-translate-y-1 transition-all duration-200' : 'transition-colors duration-200'
-                }`}
-              >
-                View Projects
-                <ExternalLink size={20} />
-              </button>
-            </div>
-          </div>
+      <section className="min-h-screen flex flex-col justify-between px-6 md:px-12 pt-32 pb-12 relative overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute inset-0 flex items-center justify-center -z-10 opacity-[0.02]">
+          <h1 className="text-[50vw] font-serif italic tracking-tighter select-none">HR</h1>
         </div>
 
-      </section>
+        <div className="flex-1 flex flex-col items-center justify-center text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 30 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            className="relative z-10"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.8 }}
+              className="font-mono text-[10px] md:text-[12px] uppercase tracking-[0.6em] text-muted mb-8"
+            >
+              Portfolio v.2026 — Software Engineer
+            </motion.div>
 
-      {/* Services Section */}
-      <section id="services" className="bg-white text-black py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 animate-on-scroll">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Services</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Comprehensive full-stack development services to bring your ideas to life
-            </p>
-          </div>
+            <h1 className="text-[22vw] sm:text-[18vw] lg:text-[15vw] font-serif leading-[0.75] tracking-tighter italic text-ink mb-12">
+              Harsh<br />Rathod
+            </h1>
 
-          <div className="services-grid grid md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: <Code2 size={48} />,
-                title: "Frontend Development",
-                description: "Modern React applications with responsive design and seamless user experiences."
-              },
-              {
-                icon: <Database size={48} />,
-                title: "Backend Development",
-                description: "Robust server architecture with secure APIs and efficient database management."
-              },
-              {
-                icon: <Globe size={48} />,
-                title: "Full Stack Solutions",
-                description: "End-to-end web applications with complete feature sets and deployment."
-              }
-            ].map((service, index) => (
-              <div 
-                key={index}
-                className={`service-card p-8 border-2 border-black rounded-lg hover:bg-black hover:text-white group ${
-                  settings.enableComplexAnimations ? 'transform hover:-translate-y-2 transition-all duration-300' : 'transition-colors duration-200'
-                }`}
-              >
-                <div className="mb-6 group-hover:text-white">
-                  {service.icon}
-                </div>
-                <h3 className="text-2xl font-bold mb-4">{service.title}</h3>
-                <p className="text-gray-600 group-hover:text-gray-300 leading-relaxed">
-                  {service.description}
-                </p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 1 }}
+              className="max-w-2xl mx-auto"
+            >
+              <p className="text-lg md:text-xl font-light leading-relaxed text-muted mb-12 px-4">
+                Crafting <span className="font-serif italic text-accent underline decoration-accent/30 underline-offset-8">intelligent systems</span> and
+                <span className="font-serif italic text-accent underline decoration-accent/30 underline-offset-8"> immersive interfaces</span>.
+                Bridging the gap between complex AI logic and human-centric design.
+              </p>
+
+              <div className="flex flex-col sm:flex-row justify-center gap-4 px-6">
+                <a href="#work" className="px-10 py-5 bg-ink text-bg rounded-full font-mono text-[10px] uppercase tracking-widest hover:bg-accent transition-all duration-500 hover:scale-105 active:scale-95 shadow-xl shadow-ink/10">
+                  Explore Work
+                </a>
+                <a href="#contact" className="px-10 py-5 border border-muted/30 text-ink rounded-full font-mono text-[10px] uppercase tracking-widest hover:bg-ink hover:text-bg transition-all duration-500 hover:scale-105 active:scale-95">
+                  Get in touch
+                </a>
               </div>
-            ))}
+            </motion.div>
+          </motion.div>
+        </div>
+
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 md:gap-12 border-t border-muted/20 pt-12 items-center text-center">
+          <div className="space-y-2">
+            <p className="font-mono text-[9px] text-muted uppercase tracking-widest">Current Role</p>
+            <p className="text-sm font-medium text-ink">Software Dev Intern @ Esamyak</p>
+          </div>
+          <div className="space-y-2">
+            <p className="font-mono text-[9px] text-muted uppercase tracking-widest">Location</p>
+            <p className="text-sm font-medium text-ink">Mumbai, Maharashtra, IN</p>
+          </div>
+          <div className="space-y-2 hidden md:block">
+            <p className="font-mono text-[9px] text-muted uppercase tracking-widest">Availability</p>
+            <div className="flex items-center justify-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <p className="text-sm font-medium text-ink">Open for Opportunities</p>
+            </div>
+          </div>
+          <div className="space-y-2 hidden lg:block">
+            <p className="font-mono text-[9px] text-muted uppercase tracking-widest">Local Time</p>
+            <p className="text-sm font-medium text-ink tabular-nums">
+              {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })} IST
+            </p>
           </div>
         </div>
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="bg-black text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 animate-on-scroll">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Featured Projects</h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              A selection of my recent projects showcasing AI, real-time collaboration, and e-commerce solutions
-            </p>
+      <section id="work" className="px-6 md:px-12 py-32">
+        <SectionHeader title="Selected Works" number="01" />
+
+        <div className="grid grid-cols-1 gap-32">
+          {DATA.projects.map((project, idx) => (
+            <motion.div
+              key={project.title}
+              initial={{ opacity: 0, y: 100 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="group grid grid-cols-1 lg:grid-cols-12 gap-12"
+            >
+              <div className="lg:col-span-5 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center gap-4 mb-6">
+                    <span className="font-mono text-xs px-3 py-1 border border-muted/30 rounded-full text-muted">
+                      {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
+                    </span>
+                    <div className="flex gap-2">
+                      {project.tech.slice(0, 3).map(t => (
+                        <span key={t} className="font-mono text-[10px] text-muted uppercase tracking-widest">{t}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <h3 className="text-5xl md:text-7xl font-serif italic mb-4 text-ink group-hover:translate-x-4 transition-transform duration-500">
+                    {project.title}
+                  </h3>
+                  <p className="text-xl text-muted mb-8 font-light italic">{project.subtitle}</p>
+                  <ul className="space-y-4 mb-12">
+                    {project.highlights.map((h, i) => (
+                      <li key={i} className="flex gap-4 text-sm leading-relaxed text-ink/80">
+                        <span className="mt-2 w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
+                        {h}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest group/link"
+                >
+                  View Case Study
+                  <ArrowUpRight className="w-4 h-4 group-hover/link:translate-x-1 group-hover/link:-translate-y-1 transition-transform" />
+                </a>
+              </div>
+
+              <div className="lg:col-span-7 relative aspect-[16/10] bg-accent/5 overflow-hidden rounded-2xl border border-muted/10">
+                {project.image ? (
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 group-hover:opacity-100 transition-all duration-700"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center opacity-10 group-hover:scale-110 transition-transform duration-1000">
+                    {idx === 0 && <Globe className="w-48 h-48 stroke-[0.5] text-accent" />}
+                    {idx === 1 && <Cpu className="w-48 h-48 stroke-[0.5] text-accent" />}
+                    {idx === 2 && <Layers className="w-48 h-48 stroke-[0.5] text-accent" />}
+                  </div>
+                )}
+                <div className="absolute bottom-4 left-4 right-4 md:bottom-8 md:left-8 md:right-8 flex justify-between items-end">
+                  <div className="font-mono text-[8px] md:text-[10px] text-muted uppercase vertical-rl rotate-180 hidden sm:block">
+                    Project_ID: {project.title.toUpperCase()}_00{idx}
+                  </div>
+                  <div className="text-right w-full sm:w-auto">
+                    <p className="font-mono text-[8px] md:text-[10px] text-muted uppercase mb-2 hidden sm:block">Technologies</p>
+                    <div className="flex flex-wrap justify-end gap-1.5 md:gap-2 sm:max-w-xs">
+                      {project.tech.map(t => (
+                        <span key={t} className="px-1.5 py-0.5 md:px-2 md:py-1 bg-accent text-bg text-[7px] md:text-[9px] uppercase tracking-tighter">{t}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Experience & Skills */}
+      <section id="about" className="px-6 md:px-12 py-32 bg-bg text-ink relative border-t border-muted/10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
+          <div className="lg:col-span-7">
+            <SectionHeader title="Experience" number="02" />
+            <div className="space-y-16 md:space-y-24">
+              {DATA.experience.map((exp) => (
+                <div key={exp.company} className="relative pl-8 md:pl-12 border-l border-muted/20">
+                  <div className="absolute top-0 left-0 -translate-x-1/2 w-3 h-3 rounded-full bg-accent" />
+                  <p className="font-mono text-[10px] md:text-xs text-muted mb-4 uppercase tracking-widest">{exp.period}</p>
+                  <h3 className="text-3xl md:text-4xl font-serif italic mb-2 text-ink">{exp.role}</h3>
+                  <p className="text-lg md:text-xl text-muted mb-6 md:mb-8">{exp.company} — {exp.location}</p>
+                  <ul className="space-y-4">
+                    {exp.description.map((d, i) => (
+                      <li key={i} className="text-sm leading-relaxed text-ink/80 font-light">
+                        {d}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="projects-grid grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Verifai",
-                tech: "React.js, Tailwind CSS, Firebase, Gemini API, D3.js",
-                description: "AI-powered Fake News Detection and Content Analysis Platform with multilingual support and image verification",
-                link: "https://verifai-by-house-stark.vercel.app",
-                image: "/Verifai.png"
-              },
-              {
-                title: "LiveDocs",
-                tech: "Next.js, Tailwind CSS, Liveblocks, Clerk",
-                description: "Real-time collaborative document editor with user authentication and version history",
-                link: "https://livedocs-by-harsh-rathod.vercel.app/sign-in",
-                image: "/Live-Docs.png"
-              },
-              {
-                title: "SkyStore",
-                tech: "Next.js, Tailwind CSS, Appwrite",
-                description: "Modern e-commerce web application with secure authentication and smooth shopping experience",
-                link: "https://sky-store-by-harsh-rathod.vercel.app/sign-in",
-                image: "/Sky-Store.png"
-              }
-            ].map((project, index) => (
-              <div 
-                key={index}
-                className={`project-card border-2 border-white rounded-lg overflow-hidden hover:bg-white hover:text-black group ${
-                  settings.enableComplexAnimations ? 'transform hover:-translate-y-2 transition-all duration-300' : 'transition-colors duration-200'
-                }`}
-              >
-                <div className="h-48 bg-gray-800 group-hover:bg-gray-200 flex items-center justify-center overflow-hidden relative">
-                  {project.image ? (
-                    <img 
-                      src={project.image} 
-                      alt={`${project.title} screenshot`}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  ) : (
-                    <Code2 size={64} className="text-gray-600 group-hover:text-gray-400" />
-                  )}
+          <div className="lg:col-span-5">
+            <div className="lg:sticky lg:top-32">
+              <SectionHeader title="Technical Stack" number="03" />
+              <div className="space-y-12">
+                <div>
+                  <h4 className="font-mono text-[10px] md:text-xs text-muted uppercase tracking-widest mb-6 flex items-center gap-2">
+                    <Code2 className="w-4 h-4" /> Languages
+                  </h4>
+                  <div className="flex flex-wrap gap-2 md:gap-3">
+                    {DATA.skills.languages.map(s => (
+                      <span key={s} className="px-3 md:px-4 py-1.5 md:py-2 border border-muted/20 rounded-full text-xs md:text-sm font-light text-ink hover:bg-accent hover:text-bg transition-all cursor-default">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-                  <p className="text-sm text-gray-400 group-hover:text-gray-600 mb-3">{project.tech}</p>
-                  <p className="text-gray-300 group-hover:text-gray-700 leading-relaxed">
-                    {project.description}
-                  </p>
-                  {project.link && (
-                    <a
-                      href={project.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-white group-hover:text-black font-semibold hover:underline"
-                    >
-                      View Project
-                      <ExternalLink size={16} />
-                    </a>
-                  )}
+                <div>
+                  <h4 className="font-mono text-[10px] md:text-xs text-muted uppercase tracking-widest mb-6 flex items-center gap-2">
+                    <Terminal className="w-4 h-4" /> Frameworks
+                  </h4>
+                  <div className="flex flex-wrap gap-2 md:gap-3">
+                    {DATA.skills.frameworks.map(s => (
+                      <span key={s} className="px-3 md:px-4 py-1.5 md:py-2 border border-muted/20 rounded-full text-xs md:text-sm font-light text-ink hover:bg-accent hover:text-bg transition-all cursor-default">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
                 </div>
+                <div>
+                  <h4 className="font-mono text-[10px] md:text-xs text-muted uppercase tracking-widest mb-6 flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4" /> Certifications
+                  </h4>
+                  <div className="space-y-3">
+                    {DATA.certifications.map(c => (
+                      <div key={c} className="text-xs md:text-sm text-ink/70 font-light flex items-center gap-3">
+                        <span className="w-1 h-1 bg-accent rounded-full" />
+                        {c}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-32">
+          <SectionHeader title="Achievements & Certificates" number="04" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+            {DATA.achievements.map((ach) => (
+              <div key={ach.title} className="group flex flex-col">
+                <div className="relative aspect-[4/3] mb-6 overflow-hidden rounded-xl border border-muted/20 bg-accent/5">
+                  <img
+                    src={ach.image}
+                    alt={ach.title}
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover transition-all duration-700 scale-100 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-accent/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <ArrowUpRight className="w-12 h-12 text-bg" />
+                  </div>
+                </div>
+                <h4 className="text-xl font-serif italic mb-2 text-ink">{ach.title}</h4>
+                <p className="text-sm text-muted leading-relaxed">{ach.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Achievements Section */}
-      <section id="achievements" className="bg-white text-black py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 animate-on-scroll">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Achievements</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Recognition and awards from hackathons and competitive programming events
-            </p>
-          </div>
+      {/* Footer / Contact */}
+      <footer id="contact" className="px-6 md:px-12 py-32 flex flex-col items-center text-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1 }}
+        >
+          <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted mb-8">Ready to collaborate?</p>
+          <h2 className="text-6xl md:text-9xl font-serif italic mb-16 tracking-tighter text-ink">
+            Let's build<br />something great.
+          </h2>
+        </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
-            {/* First Achievement */}
-            <div className={`group relative bg-black text-white rounded-3xl overflow-hidden ${settings.enableComplexAnimations ? 'transform transition-all duration-700 hover:scale-105 hover:shadow-2xl' : 'transition-all duration-300'}`}>
-              <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-800 opacity-90"></div>
-              
-              <div className="relative z-10 p-8 md:p-12 h-full flex flex-col">
-                <div className="flex items-start justify-between mb-8">
-                  <div className={`p-4 bg-white rounded-2xl ${settings.enableComplexAnimations ? 'transform transition-all duration-500 group-hover:rotate-12 group-hover:scale-110' : ''}`}>
-                    <Trophy size={32} className="text-black" />
-                  </div>
-                  <div className="bg-white text-black px-6 py-2 rounded-full font-bold text-sm tracking-wide">
-                    WINNER
-                  </div>
-                </div>
-                
-                <div className="flex-1 flex flex-col">
-                  <h3 className="text-2xl md:text-3xl font-bold mb-4 leading-tight">
-                    Google Developer Group
-                  </h3>
-                  <p className="text-lg text-gray-300 mb-6 font-medium">
-                    Code the Cloud Edition
-                  </p>
-                  
-                  {/* Certificate Display */}
-                  <div className="flex-1 mb-8">
-                    <div className={`bg-white rounded-2xl p-1 ${settings.enableComplexAnimations ? 'transform transition-all duration-500 group-hover:scale-105 group-hover:shadow-xl' : 'transition-all duration-300'}`}>
-                      <div className="bg-gray-100 rounded-xl aspect-[4/3] flex items-center justify-center overflow-hidden">
-                        <img 
-                          src="https://raw.githubusercontent.com/panduthegang/Verifai-News_Detection-System/refs/heads/main/public/Harsh-CCD.jpg" 
-                          alt="Google Developer Group Winner Certificate"
-                          className="w-full h-full object-cover rounded-xl"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <p className="text-gray-300 leading-relaxed">
-                    Winner of Google's premier cloud hackathon, competing against hundreds of developers worldwide.
-                  </p>
-                </div>
-                
-                <div className={`mt-8 w-full h-1 bg-white rounded-full ${settings.enableComplexAnimations ? 'transform transition-all duration-700 group-hover:bg-gray-300' : ''}`}></div>
-              </div>
+        <div className="flex flex-wrap justify-center gap-8 md:gap-16 mb-24">
+          <a href={`mailto:${DATA.email}`} className="group flex flex-col items-center gap-4">
+            <div className="w-16 h-16 rounded-full border border-muted/20 flex items-center justify-center group-hover:bg-accent group-hover:text-bg transition-all duration-500">
+              <Mail className="w-6 h-6" />
             </div>
+            <span className="font-mono text-[10px] uppercase tracking-widest text-muted">Email</span>
+          </a>
+          <a href={DATA.links.linkedin} target="_blank" rel="noopener noreferrer" className="group flex flex-col items-center gap-4">
+            <div className="w-16 h-16 rounded-full border border-muted/20 flex items-center justify-center group-hover:bg-accent group-hover:text-bg transition-all duration-500">
+              <Linkedin className="w-6 h-6" />
+            </div>
+            <span className="font-mono text-[10px] uppercase tracking-widest text-muted">LinkedIn</span>
+          </a>
+          <a href={DATA.links.github} target="_blank" rel="noopener noreferrer" className="group flex flex-col items-center gap-4">
+            <div className="w-16 h-16 rounded-full border border-muted/20 flex items-center justify-center group-hover:bg-accent group-hover:text-bg transition-all duration-500">
+              <Github className="w-6 h-6" />
+            </div>
+            <span className="font-mono text-[10px] uppercase tracking-widest text-muted">GitHub</span>
+          </a>
+        </div>
 
-            {/* Second Achievement */}
-            <div className={`group relative bg-white text-black border-4 border-black rounded-3xl overflow-hidden ${settings.enableComplexAnimations ? 'transform transition-all duration-700 hover:scale-105 hover:shadow-2xl hover:bg-black hover:text-white' : 'transition-all duration-300'}`}>
-              <div className="relative z-10 p-8 md:p-12 h-full flex flex-col">
-                <div className="flex items-start justify-between mb-8">
-                  <div className={`p-4 bg-black group-hover:bg-white rounded-2xl ${settings.enableComplexAnimations ? 'transform transition-all duration-500 group-hover:rotate-12 group-hover:scale-110' : ''}`}>
-                    <Award size={32} className="text-white group-hover:text-black" />
-                  </div>
-                  <div className="bg-black group-hover:bg-white text-white group-hover:text-black px-6 py-2 rounded-full font-bold text-sm tracking-wide transition-colors duration-300">
-                    RUNNER-UP
-                  </div>
-                </div>
-                
-                <div className="flex-1 flex flex-col">
-                  <h3 className="text-2xl md:text-3xl font-bold mb-4 leading-tight">
-                    Suprathon
-                  </h3>
-                  <p className="text-lg text-gray-600 group-hover:text-gray-300 mb-6 font-medium transition-colors duration-300">
-                    by Suprazo Technologies
-                  </p>
-                  
-                  {/* Certificate Display */}
-                  <div className="flex-1 mb-8">
-                    <div className={`bg-black group-hover:bg-white rounded-2xl p-1 transition-colors duration-300 ${settings.enableComplexAnimations ? 'transform transition-all duration-500 group-hover:scale-105 group-hover:shadow-xl' : ''}`}>
-                      <div className="bg-gray-800 group-hover:bg-gray-100 rounded-xl aspect-[4/3] flex items-center justify-center overflow-hidden transition-colors duration-300">
-                        <img 
-                          src="https://raw.githubusercontent.com/panduthegang/Verifai-News_Detection-System/refs/heads/main/public/Harsh-Suprathon.png" 
-                          alt="Suprathon Runner-up Certificate"
-                          className="w-full h-full object-cover rounded-xl"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <p className="text-gray-600 group-hover:text-gray-300 leading-relaxed transition-colors duration-300">
-                    Runner-up in Suprazo Technologies' intensive hackathon, showcasing innovative full-stack solutions.
-                  </p>
-                </div>
-                
-                <div className={`mt-8 w-full h-1 bg-black group-hover:bg-white rounded-full transition-colors duration-300`}></div>
-              </div>
-            </div>
+        <div className="w-full border-t border-muted/20 pt-12 flex flex-col md:flex-row justify-between items-center gap-8 font-mono text-[10px] text-muted uppercase tracking-widest">
+          <p>© 2026 Harsh Rathod. All rights reserved.</p>
+          <div className="flex gap-8">
+            <p>Built with React</p>
+            <p>Mumbai, India</p>
           </div>
         </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="bg-white text-black py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 animate-on-scroll">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">What Clients Say</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Testimonials from satisfied clients across various industries
-            </p>
-          </div>
-
-          <div className="relative overflow-hidden">
-            <div className="marquee-container">
-              <div className={`marquee-content flex gap-8 ${settings.enableComplexAnimations ? 'animate-marquee pause-marquee' : ''}`}>
-                {[
-                  {
-                    quote: "Harsh delivered an exceptional e-commerce platform that exceeded our expectations. The attention to detail and performance optimization was outstanding.",
-                    author: "Sarah Johnson",
-                    role: "CEO, TechStart Inc."
-                  },
-                  {
-                    quote: "Working with Harsh was a seamless experience. The project was delivered on time with clean, maintainable code and excellent documentation.",
-                    author: "Michael Chen",
-                    role: "CTO, DataFlow Solutions"
-                  },
-                  {
-                    quote: "The full-stack application Harsh built for us has been running flawlessly for over a year. Highly recommend for any complex web development needs.",
-                    author: "Emily Rodriguez",
-                    role: "Product Manager, InnovateCorp"
-                  },
-                  {
-                    quote: "The scalability and performance of the solution Harsh built has allowed us to grow from 1K to 100K users seamlessly.",
-                    author: "David Park",
-                    role: "Founder, GrowthTech"
-                  },
-                  {
-                    quote: "Exceptional problem-solving skills and deep understanding of modern web technologies. Delivered beyond expectations.",
-                    author: "Lisa Wang",
-                    role: "VP Engineering, CloudScale"
-                  },
-                  {
-                    quote: "The most professional developer we've worked with. Clean code, great communication, and delivered on time.",
-                    author: "James Miller",
-                    role: "CTO, StartupFlow"
-                  }
-                ].concat(settings.enableComplexAnimations ? [
-                  {
-                    quote: "Harsh delivered an exceptional e-commerce platform that exceeded our expectations. The attention to detail and performance optimization was outstanding.",
-                    author: "Sarah Johnson",
-                    role: "CEO, TechStart Inc."
-                  },
-                  {
-                    quote: "Working with Harsh was a seamless experience. The project was delivered on time with clean, maintainable code and excellent documentation.",
-                    author: "Michael Chen",
-                    role: "CTO, DataFlow Solutions"
-                  },
-                  {
-                    quote: "The full-stack application Harsh built for us has been running flawlessly for over a year. Highly recommend for any complex web development needs.",
-                    author: "Emily Rodriguez",
-                    role: "Product Manager, InnovateCorp"
-                  },
-                  {
-                    quote: "The scalability and performance of the solution Harsh built has allowed us to grow from 1K to 100K users seamlessly.",
-                    author: "David Park",
-                    role: "Founder, GrowthTech"
-                  },
-                  {
-                    quote: "Exceptional problem-solving skills and deep understanding of modern web technologies. Delivered beyond expectations.",
-                    author: "Lisa Wang",
-                    role: "VP Engineering, CloudScale"
-                  },
-                  {
-                    quote: "The most professional developer we've worked with. Clean code, great communication, and delivered on time.",
-                    author: "James Miller",
-                    role: "CTO, StartupFlow"
-                  }
-                ] : []).map((testimonial, index) => (
-                  <div 
-                    key={index}
-                    className={`testimonial-card flex-shrink-0 w-80 p-6 border-2 border-black rounded-lg hover:bg-black hover:text-white group ${
-                      settings.enableComplexAnimations ? 'transition-all duration-300' : 'transition-colors duration-200'
-                    }`}
-                  >
-                    <p className="text-base mb-4 leading-relaxed">"{testimonial.quote}"</p>
-                    <div className="pt-4 border-t-2 border-gray-300 group-hover:border-gray-600">
-                      <p className="font-bold text-sm">{testimonial.author}</p>
-                      <p className="text-gray-600 group-hover:text-gray-300 text-xs">{testimonial.role}</p>
-                    </div>
-                  </div>
-                ))}
-                </div>
-              </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact/Footer Section */}
-      <section id="contact" className="bg-black text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 animate-on-scroll">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Let's Work Together</h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Ready to bring your project to life? Get in touch and let's discuss your next web application.
-            </p>
-          </div>
-
-          <div className="flex flex-col items-center gap-8">
-            <div className="flex flex-col sm:flex-row gap-6">
-              <a 
-                href="mailto:panduthegang@gmail.com"
-                className={`bg-white text-black px-8 py-4 text-lg font-semibold rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-4 focus:ring-offset-black inline-flex items-center gap-3 ${
-                  settings.enableComplexAnimations ? 'transform hover:-translate-y-1 transition-all duration-200' : 'transition-colors duration-200'
-                }`}
-              >
-                <Mail size={20} />
-                Send Email
-              </a>
-              <a 
-                href="tel:+918451811626"
-                className={`border-2 border-white text-white px-8 py-4 text-lg font-semibold rounded-lg hover:bg-white hover:text-black focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-4 focus:ring-offset-black inline-flex items-center gap-3 ${
-                  settings.enableComplexAnimations ? 'transform hover:-translate-y-1 transition-all duration-200' : 'transition-colors duration-200'
-                }`}
-              >
-                <Phone size={20} />
-                Call Now
-              </a>
-            </div>
-
-            <div className="flex gap-6 mt-8">
-              {[
-                { icon: <Github size={24} />, href: "https://github.com/panduthegang", label: "GitHub" },
-                { icon: <Linkedin size={24} />, href: "https://www.linkedin.com/in/harsh-rathod-2591b0292/", label: "LinkedIn" },
-                { icon: <Mail size={24} />, href: "mailto:panduthegang@gmail.com", label: "Email" }
-              ].map((social, index) => (
-                <a
-                  key={index}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`p-3 border-2 border-white rounded-lg hover:bg-white hover:text-black focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-4 focus:ring-offset-black ${
-                    settings.enableComplexAnimations ? 'transform hover:-translate-y-1 transition-all duration-200' : 'transition-colors duration-200'
-                  }`}
-                  aria-label={social.label}
-                >
-                  {social.icon}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <div className="text-center mt-16 pt-8 border-t border-gray-800">
-            <p className="text-gray-400">
-              © 2024 Harsh Dev. All rights reserved. | Full Stack Developer
-            </p>
-          </div>
-        </div>
-      </section>
-
+      </footer>
     </div>
   );
 }
-
-export default App;

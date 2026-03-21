@@ -1,48 +1,43 @@
-# 🚀 Harsh Rathod - Full Stack Developer Portfolio
+# 🚀 Harsh Rathod - Software Engineer Portfolio
 
 <div align="center">
-  <img src="./public/Portfolio.png" alt="Harsh Rathod Logo">
+  <img src="./public/Thumbnail.jpg" alt="Harsh Rathod Portfolio Thumbnail">
+  
+  <br />
   
   [![Portfolio](https://img.shields.io/badge/Portfolio-Live-brightgreen?style=for-the-badge)](https://harsh-rathod-portfolio.vercel.app)
   [![GitHub](https://img.shields.io/badge/GitHub-Profile-black?style=for-the-badge&logo=github)](https://github.com/panduthegang)
   [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/harsh-rathod-2591b0292/)
   
-  **Modern • Responsive • Performance-Optimized**
+  **Minimalist • Typographic • Performance-Optimized**
 </div>
 
 ---
 
 ## 🎯 About
 
-Welcome to my personal portfolio! I'm **Harsh Rathod**, a passionate Full Stack Developer who builds scalable, modern web applications. This portfolio showcases my journey, projects, and achievements in the world of web development.
+Welcome to my personal developer portfolio, version 2026. I'm **Harsh Rathod**, a passionate Software Engineering Intern & AI Enthusiast based in Mumbai, India. My goal is crafting intelligent systems and immersive interfaces, bridging the gap between complex AI logic and human-centric design.
 
 ### ✨ What Makes This Portfolio Special
 
-- 🎨 **Modern Design**: Clean, minimalist black & white aesthetic
-- 🚀 **Performance Optimized**: Adaptive rendering based on device capabilities
-- 📱 **Fully Responsive**: Seamless experience across all devices
-- 🎭 **Interactive Animations**: GSAP-powered smooth animations
-- 🖥️ **Terminal Background**: Custom WebGL terminal effect
-- 🎪 **Bubble Navigation**: Unique floating navigation menu
-- ⚡ **Lightning Fast**: Optimized for speed and accessibility
+- 🎨 **Minimalist Aesthetic**: Clean, professional, and sophisticated typography-focused design.
+- 📱 **Fully Responsive**: Seamless layout fluidity across all devices.
+- 🎭 **Smooth Animations**: Powered by Framer Motion for elegant view transitions and interactions.
+- 🕹️ **Vintage Accents**: Subtle noise overlays and grid backgrounds for an enterprise-grade but creative look.
+- ⚡ **Lightning Fast**: Built on modern web standards with Vite and React for snappy response times.
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **React 18** - Modern UI library
+- **React 18** - UI Architecture
 - **TypeScript** - Type-safe development
 - **Tailwind CSS** - Utility-first styling
-- **GSAP** - Professional animations
-- **Lenis** - Smooth scrolling
+- **Framer Motion** - Fluid animations and gesture interactions
+- **Lucide React** - Crisp SVG iconography
 
-### Graphics & Effects
-- **OGL** - Lightweight WebGL library
-- **Custom Shaders** - Terminal background effects
-- **Performance Detection** - Adaptive rendering
-
-### Tools & Deployment
+### Tooling & Deployment
 - **Vite** - Lightning-fast build tool
 - **ESLint** - Code quality
 - **Vercel** - Deployment platform
@@ -66,37 +61,17 @@ Welcome to my personal portfolio! I'm **Harsh Rathod**, a passionate Full Stack 
 2. **Install dependencies**
    ```bash
    npm install
-   # or
-   yarn install
    ```
 
 3. **Start development server**
    ```bash
    npm run dev
-   # or
-   yarn dev
    ```
 
-4. **Open your browser**
+4. **Navigate to**
    ```
    http://localhost:5173
    ```
-
-### Build for Production
-
-```bash
-npm run build
-# or
-yarn build
-```
-
-### Preview Production Build
-
-```bash
-npm run preview
-# or
-yarn preview
-```
 
 ---
 
@@ -104,49 +79,14 @@ yarn preview
 
 ```
 src/
-├── components/          # Reusable UI components
-│   ├── BubbleMenu.tsx  # Floating navigation menu
-│   ├── OptimizedTerminal.tsx  # Performance-aware terminal
-│   ├── FaultyTerminal.tsx     # WebGL terminal effect
-│   └── ImageCarousel.tsx      # Image carousel component
-├── hooks/              # Custom React hooks
-│   └── usePerformanceOptimization.ts
-├── utils/              # Utility functions
-│   └── deviceDetection.ts
-├── App.tsx            # Main application component
-├── main.tsx          # Application entry point
-└── index.css         # Global styles
+├── App.tsx             # Main application and components
+├── constants.ts        # Content data (experience, projects, info)
+├── index.css           # Global typography, layers, and custom tokens
+└── main.tsx            # Application entry point
+public/
+├── Thumbnail.jpg       # Portfolio Thumbnail
+└── ...                 # Project images
 ```
-
----
-
-## 🎨 Features
-
-### 🖥️ Interactive Terminal Background
-- Custom WebGL shader effects
-- Performance-adaptive rendering
-- Mouse interaction support
-- Smooth animations
-
-### 🎪 Bubble Navigation Menu
-- Unique floating design
-- Smooth GSAP animations
-- Mobile-responsive
-- Accessible keyboard navigation
-
-### 📊 Performance Optimization
-- Device capability detection
-- Adaptive animation complexity
-- Memory-efficient rendering
-- Reduced motion support
-
-### 🎯 Sections
-- **Hero** - Eye-catching introduction
-- **Services** - Development offerings
-- **Projects** - Featured work showcase
-- **Achievements** - Awards and recognition
-- **Testimonials** - Client feedback
-- **Contact** - Get in touch
 
 ---
 
@@ -154,77 +94,33 @@ src/
 
 ### 🔍 Verifai
 **AI-Powered Fake News Detection Platform**
-- React.js, Tailwind CSS, Firebase
-- Gemini API integration
-- D3.js data visualization
-- [Live Demo](https://verifai-by-house-stark.vercel.app)
+- Multilingual platform supporting Hindi, Marathi, and Gujarati with 85%+ accuracy.
+- Gemini API, React.js, Firebase.
+
+### 💻 Coding Hustlers
+**AI-Powered Interview Platform**
+- Built intelligent interview practice platform with AI-generated personalized questions.
+- React.js, Firebase Auth, Tailwind CSS, Gemini API.
 
 ### 📝 LiveDocs
 **Real-time Collaborative Document Editor**
-- Next.js, Tailwind CSS
-- Liveblocks for real-time collaboration
-- Clerk authentication
-- [Live Demo](https://livedocs-by-harsh-rathod.vercel.app/sign-in)
-
-### 🛒 SkyStore
-**Modern E-commerce Platform**
-- Next.js, Tailwind CSS
-- Appwrite backend
-- Secure authentication
-- [Live Demo](https://sky-store-by-harsh-rathod.vercel.app/sign-in)
+- Enables multi-user simultaneous editing synced with Liveblocks.
+- Next.js, Clerk Auth, Tailwind CSS.
 
 ---
 
 ## 🏅 Achievements
 
-- 🥇 **Winner** - Google Developer Group "Code the Cloud Edition"
-- 🥈 **Runner-up** - Suprathon by Suprazo Technologies
-
----
-
-## 📱 Responsive Design
-
-This portfolio is fully responsive and optimized for:
-- 📱 Mobile devices (320px+)
-- 📟 Tablets (768px+)
-- 💻 Desktops (1024px+)
-- 🖥️ Large screens (1440px+)
-
----
-
-## ⚡ Performance Features
-
-- **Lazy Loading** - Images and components load on demand
-- **Code Splitting** - Optimized bundle sizes
-- **Device Detection** - Adaptive rendering based on capabilities
-- **Smooth Scrolling** - Enhanced user experience
-- **Accessibility** - WCAG compliant
-
----
-
-## 🤝 Contributing
-
-While this is a personal portfolio, I welcome suggestions and feedback!
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
+- 🥇 **Winner** - GDG Cloud Hackathon 2025
+- 🥈 **Runner-up** - Suprathon All India Virtual Hackathon
 
 ---
 
 ## 📞 Contact
 
-**Harsh Rathod** - Full Stack Developer
+**Harsh Rathod** - Software Development Intern & AI Enthusiast
 
-- 📧 Email: [panduthegang@gmail.com](mailto:panduthegang@gmail.com)
+- 📧 Email: [harshsrathod959@gmail.com](mailto:harshsrathod959@gmail.com)
 - 💼 LinkedIn: [harsh-rathod-2591b0292](https://www.linkedin.com/in/harsh-rathod-2591b0292/)
 - 🐙 GitHub: [panduthegang](https://github.com/panduthegang)
 
@@ -233,10 +129,8 @@ This project is open source and available under the [MIT License](LICENSE).
 <div align="center">
   <h3>🎉 Made with ❤️ by Harsh Rathod</h3>
   <p>
-    <strong>Building the future, one line of code at a time</strong>
+    <strong>Crafting intelligent systems and immersive interfaces</strong>
   </p>
   
   ⭐ **Star this repo if you found it helpful!** ⭐
 </div>
-
----
