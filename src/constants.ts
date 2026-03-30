@@ -81,7 +81,7 @@ export const DATA = {
         "Smart AI Enhance for prompt engineering and Ghost Autocomplete."
       ],
       link: "https://github.com/panduthegang/Prompt-Craft",
-      image: "/Prompt-Craft.png"
+      image: "/Prompt-Craft.jpg"
     }
   ],
   achievements: [
