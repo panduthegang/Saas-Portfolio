@@ -56,7 +56,7 @@ export const DATA = {
         "Implemented timeline generation and visual analytics dashboards.",
         "Integrated voice recognition and translation support."
       ],
-      link: "https://github.com/harsh-rathod",
+      link: "https://github.com/panduthegang/Verifai-News_Detection-System",
       image: "/Verifai.png"
     },
     {
@@ -68,20 +68,20 @@ export const DATA = {
         "Implemented real-time code evaluation system with progress tracking.",
         "Designed responsive UI with role-based access control."
       ],
-      link: "https://github.com/harsh-rathod",
+      link: "https://github.com/panduthegang/Coding-Hustlers",
       image: "/Coding-Hustlers.png"
     },
     {
-      title: "LiveDocs",
-      subtitle: "Collaborative Document Editor",
-      tech: ["Next.js", "Clerk", "Liveblocks", "Tailwind CSS"],
+      title: "Prompt Craft",
+      subtitle: "Intelligent UI Component Generator",
+      tech: ["React 19", "TypeScript", "Tailwind CSS 4", "Vite", "Framer Motion", "Google Gemini"],
       highlights: [
-        "Developed real-time collaborative document editor enabling multi-user simultaneous editing.",
-        "Integrated Liveblocks for real-time data syncing and presence awareness.",
-        "Implemented secure authentication and authorization using Clerk."
+        "Deep AI Integration with Google Gemini for optimized code generation.",
+        "Live Interactive Renderer in an isolated iframe environment.",
+        "Smart AI Enhance for prompt engineering and Ghost Autocomplete."
       ],
-      link: "https://github.com/harsh-rathod",
-      image: "/Live-Docs.png"
+      link: "https://github.com/panduthegang/Prompt-Craft",
+      image: "/Prompt-Craft.png"
     }
   ],
   achievements: [
