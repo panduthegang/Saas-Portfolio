@@ -102,10 +102,11 @@ public/
 - Built intelligent interview practice platform with AI-generated personalized questions.
 - React.js, Firebase Auth, Tailwind CSS, Gemini API.
 
-### 📝 LiveDocs
-**Real-time Collaborative Document Editor**
-- Enables multi-user simultaneous editing synced with Liveblocks.
-- Next.js, Clerk Auth, Tailwind CSS.
+### 🪄 Prompt Craft
+**Intelligent UI Component Generator**
+- Deep AI Integration with Google Gemini for optimized code generation.
+- Live Interactive Renderer in an isolated iframe environment.
+- React 19, TypeScript, Tailwind CSS 4, Google Gemini.
 
 ---
 
